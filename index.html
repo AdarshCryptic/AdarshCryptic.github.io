@@ -156,15 +156,7 @@ h2{font-family:var(--font-display);font-size:clamp(28px,4vw,40px);line-height:1;
 .focus h3{margin:10px 0 8px;font-size:18px;font-family:var(--font-display)}
 .focus p{margin:0;color:var(--muted);line-height:1.65;font-size:14.5px}
 
-/* HOSTING NOTE */
-.hosting{display:grid;grid-template-columns:1.05fr .95fr;gap:18px;align-items:stretch}
-@media(max-width:860px){.hosting{grid-template-columns:1fr}}
-.hosting .card h3{font-family:var(--font-display);margin:0 0 10px;font-size:21px}
-.answer{border-left:3px solid var(--amber);background:rgba(255,176,32,.07);padding:14px 16px;border-radius:0 8px 8px 0;color:#e8e2cf;line-height:1.65;font-size:14.5px;margin:14px 0}
-.steps{counter-reset:s;list-style:none;margin:0;padding:0;display:grid;gap:12px}
-.steps li{display:flex;gap:12px;color:var(--muted);line-height:1.6;font-size:14.5px}
-.steps li::before{counter-increment:s;content:counter(s);flex:0 0 28px;width:28px;height:28px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-family:var(--font-mono);font-size:12px;font-weight:700;margin-top:1px}
-.steps b{color:#fff}
+
 
 /* PYTHON CODE + DETAILS + SECURITY */
 .code-wrap{margin-top:16px;background:#070708;border:1px solid #26262c;border-radius:10px;overflow:hidden}
@@ -279,7 +271,7 @@ footer{padding:28px 0 36px;color:var(--muted2);font-family:var(--font-mono);font
   <div class="nav-in">
     <a class="logo" href="#top"><span class="logo-mark">AC</span><span><b>ADARSH CHAUDHARI</b><span>Offensive Security</span></span></a>
     <div class="nav-links">
-      <a href="#about">About</a><a href="#skills">Skills</a><a href="#profile">Certs</a><a href="#project">Project</a><a href="#security">Security</a><a href="#hosting">Hosting</a>
+      <a href="#about">About</a><a href="#skills">Skills</a><a href="#profile">Certs</a><a href="#project">Project</a><a href="#security">Security</a>
       <a href="https://github.com/AdarshCryptic" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
       <a href="https://tryhackme.com/p/n3urotrace" target="_blank" rel="noopener noreferrer">TryHackMe ↗</a>
       <a class="btn btn-red" style="min-height:44px;padding:0 16px" href="https://www.linkedin.com/in/adarsh-chaudhari-15629b325" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
@@ -335,13 +327,13 @@ footer{padding:28px 0 36px;color:var(--muted2);font-family:var(--font-mono);font
     <div class="sec-head reveal"><div><div class="kicker">01 — Profile</div><h2>Think like an attacker.<br>Build like a defender.</h2></div><p>Offensive security is not just about breaking in — it’s about understanding attacker behaviour deeply enough to detect it early.</p></div>
     <div class="about-grid">
       <article class="card reveal">
-        <p>I’m <strong>Adarsh Chaudhari</strong> (He/Him), an <strong>Offensive Security Researcher</strong> based in the <strong>Greater Delhi Area</strong>, with an <strong>M.Sc in Digital Forensic &amp; Information Security</strong>. My headline sums up the work: <strong>OffSec | OSINT | DFIR | CTFer</strong>. Instead of only theorising about attacks, I build environments where attacks can be safely observed, logged, and analysed.</p>
+        <p>I’m <strong>Adarsh Chaudhari</strong>, an <strong>Offensive Security Researcher</strong> based in the <strong>Greater Delhi Area</strong>, with an <strong>M.Sc in Digital Forensic &amp; Information Security</strong>. My headline sums up the work: <strong>OffSec | OSINT | DFIR | CTFer</strong>. Instead of only theorising about attacks, I build environments where attacks can be safely observed, logged, and analysed.</p>
         <p>My honeypot project does exactly that: it presents intentionally vulnerable-looking <strong>SSH and Telnet services</strong>, records login attempts and attack patterns, runs simulated attacks across multiple vectors to study behaviour, and then uses a local AI model via <strong>Ollama</strong> for attack analysis and incident detection — with a <strong>Telegram bot</strong> pushing real-time alerts when something matters.</p>
         <p style="border-left:3px solid var(--red);padding-left:12px;color:#d6d6dc">Education, location, headline and the 11 certifications in the Certifications section are taken from the LinkedIn details and screenshots shared for this site. <strong style="color:#fff">OSCP is listed separately as in progress — working on it, not yet completed.</strong> On TryHackMe I’m <a href="https://tryhackme.com/p/n3urotrace" target="_blank" rel="noopener noreferrer" style="color:var(--amber)">n3urotrace</a> — 5,618 events in the last year (2026) and 4,954 events in 2025. You can reach me at <strong><a href="mailto:adarshchaudhari963@gmail.com">adarshchaudhari963@gmail.com</a></strong>.</p><p>I read and understand code across <strong>C, Python, PHP, C++ and DBMS</strong> — I focus on understanding what code is actually trying to do, its syntax and logic, which is exactly the skill you need when auditing, exploiting, or defending a system.</p>
       </article>
       <aside class="card reveal">
         <ul class="fact-list">
-          <li><span>Name</span><b>Adarsh Chaudhari · He/Him</b></li>
+          <li><span>Name</span><b>Adarsh Chaudhari</b></li>
           <li><span>Headline</span><b>OffSec | OSINT | DFIR | CTFer</b></li>
           <li><span>Role</span><b>Offensive Security Researcher</b></li>
           <li><span>Education</span><b>M.Sc in Digital Forensic &amp; Information Security</b></li>
@@ -523,31 +515,9 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
     </div>
   </section>
 
-  <!-- HOSTING -->
-  <section id="hosting">
-    <div class="sec-head reveal"><div><div class="kicker">06 — Going Live</div><h2>Hosting This Site — Free</h2></div><p>Built as a single static site (HTML + CSS + JavaScript + Three.js, with Python shown for the honeypot logic), so it can be hosted free with no server to maintain.</p></div>
-    <div class="hosting">
-      <article class="card reveal">
-        <h3>About that “free lifetime domain” question</h3>
-        <p style="margin:0">Short answer: <strong style="color:#fff">not quite lifetime.</strong> With the GitHub Student Developer Pack, the domain offers are typically free for the <strong style="color:#fff">first year</strong> — then they renew at the normal price.</p>
-        <div class="answer"><strong>Honest answer:</strong> GitHub Student Pack partners like Namecheap, Name.com and .TECH have historically offered 1 free domain for 1 year (e.g. a free .me via Namecheap) — not a lifetime domain. Hosting itself (GitHub Pages) <em>is</em> free for as long as you use it. Always check the current offer inside your Student Pack dashboard, as partner terms change.</div>
-        <p style="margin:0">Practical play: claim the 1-year free domain, host free on GitHub Pages forever, and set a reminder before renewal so there are no surprises.</p>
-      </article>
-      <article class="card reveal">
-        <h3>Deploy in 4 steps</h3>
-        <ol class="steps">
-          <li><span><b>Push this site to GitHub</b> — create a repo and upload <b>index.html</b> + the whole <b>assets</b> folder (Three.js, the five certificate images, the demo video <b>project-demo.mp4</b> and its poster).</span></li>
-          <li><span><b>Turn on GitHub Pages</b> — Settings → Pages → deploy from the main branch. You get a free <b>username.github.io</b> address instantly.</span></li>
-          <li><span><b>Claim your student domain</b> — open GitHub Student Pack → Namecheap / Name.com / .TECH offer and register your name.</span></li>
-          <li><span><b>Connect it &amp; enforce HTTPS</b> — add the domain in Pages settings, point the DNS records as GitHub instructs, and tick <b>Enforce HTTPS</b>. Then add the security headers in the Security section below (via Cloudflare or a host that supports a <b>_headers</b> file, since GitHub Pages cannot set custom headers itself).</span></li>
-        </ol>
-      </article>
-    </div>
-  </section>
-
   <!-- SECURITY -->
   <section id="security">
-    <div class="sec-head reveal"><div><div class="kicker">07 — Website Security</div><h2>Hardened by Design</h2></div><p>A portfolio does not need a backend, accounts, or a database — so this site removes that whole attack surface, then locks down what remains.</p></div>
+    <div class="sec-head reveal"><div><div class="kicker">06 — Website Security</div><h2>Hardened by Design</h2></div><p>A portfolio does not need a backend, accounts, or a database — so this site removes that whole attack surface, then locks down what remains.</p></div>
     <div class="security-grid">
       <article class="card reveal">
         <h3 style="font-family:var(--font-display);margin:0 0 12px;font-size:21px">What is already in place</h3>
@@ -579,7 +549,7 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
   <!-- CONTACT -->
   <section>
     <div class="contact reveal">
-      <div><div class="kicker">08 — Contact</div><h2>Let’s talk security.</h2><p>Interested in offensive security, honeypots, detection, or an opportunity? The fastest way to reach me is LinkedIn. TryHackMe and GitHub are linked too — or email me directly at adarshchaudhari963@gmail.com.</p></div>
+      <div><div class="kicker">07 — Contact</div><h2>Let’s talk security.</h2><p>Interested in offensive security, honeypots, detection, or an opportunity? The fastest way to reach me is LinkedIn. TryHackMe and GitHub are linked too — or email me directly at adarshchaudhari963@gmail.com.</p></div>
       <div class="contact-actions">
         <a href="https://www.linkedin.com/in/adarsh-chaudhari-15629b325" target="_blank" rel="noopener noreferrer">LinkedIn — Adarsh Chaudhari <span>linkedin.com/in/adarsh-chaudhari-15629b325 ↗</span></a>
         <a href="https://tryhackme.com/p/n3urotrace" target="_blank" rel="noopener noreferrer">TryHackMe — n3urotrace <span>tryhackme.com/p/n3urotrace ↗</span></a>
