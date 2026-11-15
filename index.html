@@ -481,7 +481,7 @@ body.roam-on .astro,body.roam-on .orbiter,body.roam-on .target-node{left:0;top:0
    practice: at laptop widths the cards fill the screen edge to edge,
    so the astronaut spent the hero hidden behind the terminal card and
    the satellite behind the operator card. In front, travelling the
-   screen edges, all three are actually visible in every section at
+   whole screen, all three are actually visible in every section at
    every width — which is what roaming all over the website means. The
    no-script / reduced-motion parked spots keep the background layer. */
 body.roam-on .astro,body.roam-on .orbiter,body.roam-on .target-node{z-index:40}
@@ -569,7 +569,7 @@ body.attack-off #attackSvg,body.attack-off #attackLog,body.attack-off .target-no
    behind the content it was hidden by the opaque cards that fill a
    laptop screen edge to edge — the astronaut spent the hero behind the
    terminal card and the satellite behind the operator card. In front,
-   travelling the screen edges at 148–172px with a bright glow, all
+   travelling the whole screen at 148–172px with a bright glow, all
    three are unmissable in every section, and pointer-events:none means
    they still can never block a tap, a card control or the video. */
 /* Short viewports: compact the HUD so it cannot reach the hero cards. */
@@ -1896,15 +1896,23 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
      z-index:40, pointer-events off): behind the content they were
      invisible in practice — at laptop widths the opaque cards fill the
      screen, so the crew spent the whole page hidden behind them. In
-     front, travelling the screen edges, they are seen everywhere —
+     front, travelling the whole screen, they are seen everywhere —
        · SAT-01 sweeps the full width, edge to edge and back, while its
-         flight band sinks and rises through most of the screen height
-         as you scroll;
-       · the hacker astronaut patrols a lane hugging the right edge,
-         working up and down the full screen height with the scroll;
-       · the Earth target server patrols a lane hugging the left edge
-         on the opposite phase, so the crew stays spread across the
-         screen, not bunched.
+         flight band traverses the FULL screen height over time, top
+         band to bottom band, in every section;
+       · the hacker astronaut flies a wide patrol loop across the
+         right half of the screen — in from the right margin toward
+         the middle and back, over the full screen height;
+       · the Earth target server flies the mirror loop on the left
+         half, on the opposite height phase, so the crew stays spread
+         across the screen, not bunched.
+     All three journeys run on their own clocks (the reader does not
+     have to scroll to see them move), and scrolling advances every
+     journey's phase, so the crew is somewhere new in every section.
+     An earlier build pinned the astronaut and the Earth server to
+     the screen edges and moved them only with the scroll — the owner
+     kept reporting, correctly, that they read as parked at the top
+     of the site; the travelling journeys below are the fix.
      Pointer-events stay off, so the crew can never block a tap or a
      click even while crossing the page. The attack-chain beams read the
      nodes' live positions every frame, so the astronaut → SAT-01 →
@@ -1927,12 +1935,14 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
   }
   /* CLEAR OF THE TEXT — the crew roams everywhere, but never ON the
      words. Two guards, re-measured from the live layout:
-       1. GUTTER LANES. The content column (.wrap, max 1180px) leaves
-          empty galaxy margins on wide screens. When a margin is wide
-          enough, the astronaut cruises the RIGHT margin and the Earth
-          server the LEFT margin — over bare starfield, beside the hero
-          at load, so the astronaut is unmissably in the hero at laptop
-          and desktop widths alike instead of lost on top of a card.
+       1. GUTTER ANCHORS. The content column (.wrap, max 1180px)
+          leaves empty galaxy margins on wide screens. The astronaut's
+          journey is anchored on the RIGHT margin and the Earth
+          server's on the LEFT margin — over bare starfield, beside the
+          hero at load, so the astronaut is unmissably in the hero at
+          laptop and desktop widths alike instead of lost on top of a
+          card — and from those anchors their swings carry them in
+          across the screen and back as their journeys run.
        2. TEXT DODGE. The live boxes of everything readable are no-fly
           zones: the hero name (h1), every section heading block
           (.sec-head / h2), the operator card — and the whole hero text
@@ -2083,28 +2093,55 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
     function crewBox(n, w, h){ return n.init ? {l:n.x-10, r:n.x+w+10, t:n.y-10, b:n.y+h+10, wt:4} : null; }
     var bS=crewBox(S, sw, sh), bA=crewBox(A, aw, ah), bT=crewBox(T, tw, th);
     function others(){ var o=[]; for(var i=0;i<arguments.length;i++){ if(arguments[i]) o.push(arguments[i]); } return o; }
-    /* SAT-01 — full-width sweep; its flight band follows the scroll */
-    var sweep=0.5-0.5*Math.cos(t*0.14);
+    /* THE JOURNEYS — all three crew members TRAVEL the whole screen
+       on their own engines, in every section, whether or not the
+       reader scrolls. The old build pinned the astronaut to the
+       right edge and the Earth server to the left edge for the whole
+       page and moved them only when the reader scrolled; the
+       satellite crossed slowly but never left the top two-thirds of
+       the screen — so in practice the crew read as three decorations
+       parked at the top of the site, which is exactly what the owner
+       kept rejecting. Now each member flies a wide, slow Lissajous
+       journey across the full width and the full height of the
+       viewport — edge to edge, top band to bottom band — on its own
+       period (satellite ~57s a traverse, astronaut ~2min a loop,
+       Earth server ~2min the opposite loop), and scrolling advances
+       every journey's phase, so scrolling also visibly relocates
+       them section by section. The text dodge below still vets every
+       target: a journey point that falls on words is escaped to the
+       nearest clear slot, so the crew glides along the margins, the
+       gaps between sections and the hero's clear lane, following
+       their travelling targets as closely as clear space allows —
+       seen moving in Skills, Experience, Certifications, the
+       project and the footer, not only in the hero. */
+    var sp=sy*0.0021;
+    /* SAT-01 — full-width sweep, and its flight band now traverses
+       the FULL screen height over time instead of the top 68% */
+    var sweep=0.5-0.5*Math.cos(t*0.11+sp*1.4);
     var sx=14+sweep*Math.max(0,(W-sw-28));
-    var band=0.5+0.5*Math.sin(sy*0.0011-1.2);
-    var syy=74+band*Math.max(0,(H*0.68-74))+Math.sin(t*0.7)*7;
+    var band=0.5+0.5*Math.sin(t*0.045+sp*1.9-1.2);
+    var syy=74+band*Math.max(0,(H-sh-88))+Math.sin(t*0.7)*7;
     var sd=dodge(sx, syy, sw, sh, 70, H, W, others(bA, bT));
     step(S, sd.x, sd.y, Math.sin(t*0.5)*2.5, rateFor(S, sw, sh));
-    /* Hacker astronaut — right gutter lane on wide screens, otherwise
-       the right edge lane; works up and down with the scroll */
-    var ax;
-    if(gutR>aw*0.72){ ax=wrapR+(gutR-aw)/2+Math.sin(sy*0.0009+2.6)*Math.min(34,Math.max(0,(gutR-aw)/2)); }
-    else { ax=W-aw-10-(W*0.16)*(0.5+0.5*Math.sin(sy*0.0009+2.6)); }
-    var ay=70+(H-ah-84)*(0.5+0.5*Math.sin(sy*0.0013+Math.PI))+Math.sin(t*0.9)*9;
+    /* Hacker astronaut — a real patrol, not a parked edge lane: it
+       works the right half of the screen, swinging from the right
+       margin in toward the middle and back while it traverses the
+       full height, on a ~2-minute loop the scroll also advances.
+       Where a galaxy gutter exists it starts from the gutter; the
+       swing carries it across the screen from there. */
+    var axBase=(gutR>aw*0.72) ? (wrapR+(gutR-aw)/2) : (W-aw-10);
+    var ax=axBase-Math.min(W*0.34, 520)*(0.5+0.5*Math.sin(t*0.037+sp*1.6+0.8));
+    var ay=70+(H-ah-84)*(0.5+0.5*Math.sin(t*0.052+sp*2.2+2.1))+Math.sin(t*0.9)*9;
     ax=clamp(ax,8,W-aw-8); ay=clamp(ay,66,H-ah-8);
     var ad=dodge(ax, ay, aw, ah, 66, H, W, others(bS, bT));
     step(A, ad.x, ad.y, Math.sin(t*0.6)*4.5, rateFor(A, aw, ah));
-    /* Earth target server — left gutter lane on wide screens, opposite
-       phase to the astronaut */
-    var tx;
-    if(gutL>tw*0.72){ tx=(gutL-tw)/2+Math.sin(sy*0.0007+4.2)*Math.min(34,Math.max(0,(gutL-tw)/2)); }
-    else { tx=10+(W*0.14)*(0.5+0.5*Math.sin(sy*0.0007+4.2)); }
-    var ty=70+(H-th-84)*(0.5+0.5*Math.sin(sy*0.001+0.6));
+    /* Earth target server — the mirror journey on the left half:
+       opposite height phase to the astronaut, swinging in from the
+       left margin toward the middle and back, so the two are never
+       parked on the same band at the same time */
+    var txBase=(gutL>tw*0.72) ? ((gutL-tw)/2) : 10;
+    var tx=txBase+Math.min(W*0.34, 520)*(0.5+0.5*Math.sin(t*0.033+sp*1.6+3.4));
+    var ty=70+(H-th-84)*(0.5+0.5*Math.sin(t*0.047+sp*2.2+2.1+Math.PI));
     tx=clamp(tx,8,W-tw-8); ty=clamp(ty,66,H-th-8);
     var td=dodge(tx, ty, tw, th, 66, H, W, others(bS, bA));
     step(T, td.x, td.y, Math.sin(t*0.45+2)*2, rateFor(T, tw, th));
