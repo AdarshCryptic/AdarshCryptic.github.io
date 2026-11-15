@@ -246,7 +246,7 @@ h2{font-family:var(--font-display);font-size:clamp(28px,4vw,40px);line-height:1;
 .plan-badge{opacity:0;transform-box:fill-box;transform-origin:center;animation:planBadge 16s linear infinite}
 .plan-badge rect{fill:rgba(24,3,3,.94);stroke:#ff2e2e;stroke-width:2;filter:drop-shadow(0 0 9px rgba(255,46,46,.8))}
 .plan-badge text{fill:#fff;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:21px;font-weight:700;letter-spacing:3px}
-@keyframes planBadge{0%,80%{opacity:0;transform:scale(.92)}84%{opacity:1;transform:scale(1.05)}88%{transform:scale(1)}95%{opacity:1}100%{opacity:0;transform:scale(1)}}
+@keyframes planBadge{0%,72%{opacity:0;transform:scale(.92)}77%{opacity:1;transform:scale(1.05)}81%{transform:scale(1)}97%{opacity:1}100%{opacity:0;transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){.plan-stage,.plan-badge{animation:none;opacity:0}.plan-route{animation:none}.plan-pulse{display:none}}
 /* ATTACKER POV — SWIPE DECK. Four real Kali terminal frames from the
    auto_attack_lab.sh simulation against the honeypot, stacked one
@@ -415,7 +415,6 @@ h1:hover em{animation:glitch .32s steps(2) 2}
 #cursorRing::after{left:50%;bottom:-7px;width:1px;height:5px}
 #cursorRing.hot{width:58px;height:58px;border-color:var(--cyan)}
 #cursorRing.hot::before,#cursorRing.hot::after{background:var(--cyan)}
-#cursorCoord{position:absolute;pointer-events:none;left:50%;top:calc(100% + 10px);transform:translateX(-50%);font-family:var(--font-mono);font-size:9px;letter-spacing:.08em;color:rgba(255,179,179,.85);white-space:nowrap;transition:opacity .3s ease}
 @media(pointer:coarse){#cursorDot,#cursorRing{display:none}}
 
 /* VIDEO-STYLE SWEEP — a slow sensor band drifting down the background, like a live feed */
@@ -486,7 +485,7 @@ body.roam-on .astro,body.roam-on .orbiter,body.roam-on .target-node{left:0;top:0
    every width — which is what roaming all over the website means. The
    no-script / reduced-motion parked spots keep the background layer. */
 body.roam-on .astro,body.roam-on .orbiter,body.roam-on .target-node{z-index:40}
-body.roam-on #attackSvg{z-index:39;opacity:.3}
+body.roam-on #attackSvg{z-index:39;opacity:.16}
 body.roam-on #linkA,body.roam-on #linkB{stroke-width:1.1}
 .drift-label{display:block;text-align:center;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.1em;color:#dff6ff;background:rgba(4,10,14,.78);border:1px solid rgba(53,211,244,.55);border-radius:999px;padding:3px 5px;margin-top:2px;white-space:nowrap}
 .astro .drift-label{color:#ffe1e1;border-color:rgba(255,46,46,.6)}
@@ -590,6 +589,20 @@ body.attack-off #attackSvg,body.attack-off #attackLog,body.attack-off .target-no
   .orbiter{width:120px}
   .astro .drift-label,.orbiter .drift-label{white-space:normal;line-height:1.35}
 }
+/* MID-WIDTH LAPTOPS (901–1600px) — the content column is the same
+   1180px, so the galaxy margins shrink to ~90–210px a side: too
+   narrow for the full-size crew. With nowhere fully clear to sit in
+   a crowded hero, the least-bad dodge slot was a graze across the
+   intro paragraph. In this band the crew flies one size smaller —
+   satellite 128px, astronaut and Earth server 112px — narrow enough
+   to cruise the margins completely clear of the content column,
+   labels included, and still big enough to read at a glance. */
+@media(min-width:901px) and (max-width:1600px){
+  .astro{width:112px}
+  .orbiter{width:128px}
+  .target-node{width:112px}
+  .astro .drift-label,.orbiter .drift-label{font-size:8.5px;letter-spacing:.07em}
+}
 </style>
 </head>
 <body>
@@ -601,7 +614,7 @@ body.attack-off #attackSvg,body.attack-off #attackLog,body.attack-off .target-no
 <svg id="attackSvg" aria-hidden="true"><line id="linkA" x1="0" y1="0" x2="0" y2="0"/><line id="linkB" x1="0" y1="0" x2="0" y2="0"/><circle id="pktA" r="4" fill="#35d3f4"/><circle id="pktA2" r="2.6" fill="#bff1ff"/><circle id="pktB" r="4" fill="#ff2e2e"/><circle id="pktB2" r="2.6" fill="#ffb020"/></svg>
 <div class="target-node" id="targetNode" aria-hidden="true"><svg viewBox="0 0 120 118" fill="none" aria-hidden="true"><defs><radialGradient id="earthOcean" cx="38%" cy="30%" r="82%"><stop offset="0%" stop-color="#45a3e8"/><stop offset="55%" stop-color="#1767bd"/><stop offset="100%" stop-color="#0a2f66"/></radialGradient><clipPath id="earthClip"><circle cx="60" cy="88" r="28"/></clipPath></defs><circle class="earth-atmo" cx="60" cy="88" r="32.5" stroke="#35d3f4" stroke-opacity=".5" stroke-width="1.6" stroke-dasharray="3 5"/><circle cx="60" cy="88" r="28" fill="url(#earthOcean)"/><g clip-path="url(#earthClip)"><g fill="#2fbf71"><path d="M36 76q11-9 22-4 3 7-4 10-10 4-16 0-5-4-2-6z"/><path d="M68 68q13-3 18 6 2 8-7 11-11 3-15-4-1-9 4-13z"/><path d="M50 98q10-4 17 3 3 7-5 10-11 3-15-3-2-6 3-10z"/><path d="M80 102q9-2 12 5 1 6-7 8-9 1-11-5 0-6 6-8z"/><path d="M33 92q6 2 5 8-2 5-8 4-5-2-4-7 1-6 7-5z"/></g><ellipse cx="60" cy="62.5" rx="13" ry="3.2" fill="#eaf6ff" opacity=".9"/><path d="M84 66a28 28 0 0 1 0 44 34 34 0 0 0 0-44z" fill="#04122e" opacity=".32"/></g><circle cx="60" cy="88" r="28" stroke="#7cc7ff" stroke-opacity=".85" stroke-width="1.4"/><ellipse cx="60" cy="59.5" rx="19" ry="3.2" fill="#000000" opacity=".45"/><rect class="srv-body" x="38" y="4" width="44" height="52" rx="5" fill="#17171e" stroke="#ffb020" stroke-opacity=".9"/><rect x="44" y="10" width="32" height="11" rx="2" fill="#0b0b0f" stroke="#ffffff" stroke-opacity=".28"/><rect x="44" y="25" width="32" height="11" rx="2" fill="#0b0b0f" stroke="#ffffff" stroke-opacity=".28"/><rect x="44" y="40" width="32" height="11" rx="2" fill="#0b0b0f" stroke="#ffffff" stroke-opacity=".28"/><circle class="srv-light" cx="49.5" cy="15.5" r="2.3" fill="#2ee06f"/><circle cx="49.5" cy="30.5" r="2.3" fill="#ffb020"/><circle class="srv-light" cx="49.5" cy="45.5" r="2.3" fill="#ff2e2e"/><path d="M56 15.5h17M56 30.5h17M56 45.5h13" stroke="#8b93a0" stroke-width="2.2"/><path d="M47 56l-2.5 4M73 56l2.5 4" stroke="#e8e8ec" stroke-opacity=".55" stroke-width="2.6" stroke-linecap="round"/></svg><span class="drift-label" id="targetLabel">TARGET-SRV-01 · EARTH</span></div>
 <div id="cursorDot" aria-hidden="true"></div>
-<div id="cursorRing" aria-hidden="true"><span id="cursorCoord"></span></div>
+<div id="cursorRing" aria-hidden="true"></div>
 
 <nav>
   <div class="nav-in">
@@ -655,7 +668,7 @@ body.attack-off #attackSvg,body.attack-off #attackLog,body.attack-off .target-no
       </div>
       <div class="controls-card">
         <h3>3D Scene — 360° space view</h3>
-        <p><strong style="color:#fff">Just move your mouse</strong> — no click needed. Left edge looks west, right edge looks east, a full sweep across the screen pans the galaxy a full 360°; move up / down to tilt. On touch screens, drag across the page. Watch the live HDG / TILT readout in this card, right under the orbit buttons. Switch the geometry behind this portfolio:</p>
+        <p><strong style="color:#fff">Just move your mouse — or drag on touch</strong> — no click needed. Left edge looks west, right edge looks east, a full sweep across the screen pans the galaxy a full 360°; move up / down to tilt. On phones the view also launches already orbiting: leave it untouched for a few seconds and it slowly pans the full 360° on its own. Watch the live HDG / TILT readout in this card, right under the orbit buttons. Switch the geometry behind this portfolio:</p>
         <div class="seg" role="group" aria-label="Choose 3D scene">
           <button type="button" data-mode="core" class="active">⬢ Core</button>
           <button type="button" data-mode="globe">◎ Globe</button>
@@ -665,7 +678,7 @@ body.attack-off #attackSvg,body.attack-off #attackLog,body.attack-off .target-no
           <button type="button" id="orbitToggle" class="active" aria-pressed="true">◉ 360° Orbit — ON</button>
           <button type="button" id="orbitReset">⌖ Reset view</button>
         </div>
-        <div id="orbitHud"><span class="hud-red">◉ 360° SPACE VIEW</span> &nbsp;<b id="orbitHdg">HDG 000°</b> · <b id="orbitTilt">TILT +0°</b><span class="hud-sub" id="orbitHint">Move your mouse — left / right / up / down pans the galaxy full 360°</span></div>
+        <div id="orbitHud"><span class="hud-red">◉ 360° SPACE VIEW</span> &nbsp;<b id="orbitHdg">HDG 000°</b> · <b id="orbitTilt">TILT +0°</b><span class="hud-sub" id="orbitHint">Move the mouse or drag — a full sweep pans the galaxy 360°; idle, it orbits on its own</span></div>
         <button type="button" class="attack-btn active" id="attackToggle" aria-pressed="true">⚡ Attack chain — ON (astronaut → SAT-01 → server on Earth)</button>
         <div class="seg track-row" role="group" aria-label="Choose a music track">
           <button type="button" class="track-btn active" data-track="nightops">◉ Night Ops</button>
@@ -1116,16 +1129,14 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
   /* ---------- Cursor follower: reticle + dot trail the pointer; operator portrait parallaxes ---------- */
   var fine = window.matchMedia && window.matchMedia('(pointer:fine)').matches;
   var reducedM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var ring=document.getElementById('cursorRing'), dot=document.getElementById('cursorDot'), coord=document.getElementById('cursorCoord');
+  var ring=document.getElementById('cursorRing'), dot=document.getElementById('cursorDot');
   if(!fine || reducedM || !ring || !dot) return;
   var x=window.innerWidth/2, y=window.innerHeight/2, rx=x, ry=y, shown=false;
   var opImg=document.querySelector('.operator img');
-  function pad(n){ var s=String(n); while(s.length<4) s='0'+s; return s; }
   window.addEventListener('pointermove', function(e){
     x=e.clientX; y=e.clientY;
     if(!shown){ shown=true; ring.style.opacity='1'; dot.style.opacity='1'; }
     dot.style.transform='translate('+x+'px,'+y+'px) translate(-50%,-50%)';
-    if(coord) coord.textContent='X '+pad(x)+' · Y '+pad(y);
     if(opImg){ var ox=(x/window.innerWidth-.5), oy=(y/window.innerHeight-.5); opImg.style.transform='scale(1.12) translate('+(ox*-16)+'px,'+(oy*-11)+'px)'; }
     var t=e.target, hot = t && t.closest && t.closest('a,button,[role="button"]');
     ring.classList.toggle('hot', !!hot);
@@ -1343,13 +1354,14 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
      screen maps to a full 360° heading sweep, the full height maps to tilt. The Three.js
      animate loop reads window.__orbitState and eases the camera around the scene centre.
      Reset bumps resetSeq; the scene snaps its smoothed angles back to centre when it changes. */
-  var state = { enabled:true, resetSeq:0 };
+  var state = { enabled:true, resetSeq:0, lastInput:0, hdgDeg:null, tiltDeg:0 };
   window.__orbitState = state;
   var hdg=document.getElementById('orbitHdg'), tilt=document.getElementById('orbitTilt'), hint=document.getElementById('orbitHint');
   var toggle=document.getElementById('orbitToggle'), resetBtn=document.getElementById('orbitReset');
   function pad3(n){ var s=String(n); while(s.length<3) s='0'+s; return s; }
   function showFromPointer(cx, cy){
     if(!state.enabled) return;
+    state.lastInput=performance.now();
     var tx=(cx/window.innerWidth-.5)*2, ty=(cy/window.innerHeight-.5)*2;
     var heading=Math.round(((tx*180)%360+360)%360);
     var t=Math.round(-ty*57);
@@ -1359,6 +1371,18 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
   window.addEventListener('pointermove', function(e){ showFromPointer(e.clientX, e.clientY); }, {passive:true});
   /* Touch: a drag across the page also orbits — pointermove fires while touching */
   window.addEventListener('touchmove', function(e){ if(e.touches && e.touches[0]) showFromPointer(e.touches[0].clientX, e.touches[0].clientY); }, {passive:true});
+  /* Idle HUD sync — while the scene auto-orbits on its own (no pointer or
+     touch input for a few seconds, e.g. a phone sitting untouched after
+     launch), the scene publishes its live heading / tilt on the shared
+     state; mirror that into the readout so the numbers keep telling the
+     truth instead of freezing at the last touch or at HDG 000°. */
+  setInterval(function(){
+    if(!state.enabled || state.hdgDeg===null) return;
+    if(performance.now()-state.lastInput<2500) return;
+    var hv=Math.round(state.hdgDeg), tv=Math.round(state.tiltDeg);
+    if(hdg) hdg.textContent='HDG '+pad3(hv)+'°';
+    if(tilt) tilt.textContent='TILT '+(tv>=0?'+':'')+tv+'°';
+  }, 300);
   /* No scroll fade any more: the space traffic no longer belongs to the
      hero stage only. The astronaut, SAT-01 and the Earth target stay on
      screen for the whole page and are steered around every section by
@@ -1371,7 +1395,7 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
       toggle.classList.toggle('active', state.enabled);
       toggle.setAttribute('aria-pressed', state.enabled?'true':'false');
       toggle.textContent=state.enabled?'◉ 360° Orbit — ON':'○ 360° Orbit — OFF';
-      if(hint) hint.textContent=state.enabled?'Move your mouse — left / right / up / down pans the galaxy full 360°':'Orbit off — the galaxy holds still. Tap 360° Orbit to look around again.';
+      if(hint) hint.textContent=state.enabled?'Move the mouse, or drag on touch — a full sweep pans the galaxy 360°; leave it idle and it slowly orbits on its own':'Orbit off — the galaxy holds still. Tap 360° Orbit to look around again.';
       if(!state.enabled){ if(hdg) hdg.textContent='HDG ---°'; if(tilt) tilt.textContent='TILT +0°'; }
     });
   }
@@ -1380,7 +1404,7 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
       state.resetSeq++;
       if(hdg) hdg.textContent='HDG 000°';
       if(tilt) tilt.textContent='TILT +0°';
-      if(hint) hint.textContent='View reset to centre — move your mouse to look around 360° again.';
+      if(hint) hint.textContent='View reset to centre — move the mouse or drag to look around 360° again.';
     });
   }
 })();
@@ -1458,6 +1482,12 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
     try{ ctx=cv.getContext('2d'); }catch(e){}
     if(!ctx) return;
     var W=0, H=0, stars=[];
+    /* The fallback answers the orbit too: a drag (or the idle auto-drift)
+       pans the starfield sideways, so the 360° view still moves on a
+       device where WebGL is unavailable instead of sitting frozen. */
+    var pan=0, autoPan=0, ftx=0, lastIn=0, prevMs=-1;
+    window.addEventListener('pointermove', function(e){ ftx=(e.clientX/window.innerWidth-.5)*2; lastIn=performance.now(); }, {passive:true});
+    window.addEventListener('touchmove', function(e){ if(e.touches && e.touches[0]){ ftx=(e.touches[0].clientX/window.innerWidth-.5)*2; lastIn=performance.now(); } }, {passive:true});
     function build(){
       W=cv.width=window.innerWidth; H=cv.height=window.innerHeight;
       stars=[];
@@ -1470,6 +1500,13 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
       }
     }
     function draw(t){
+      var orbOn = !window.__orbitState || window.__orbitState.enabled;
+      if(t>0 && orbOn){
+        var dtm = prevMs<0 ? 16 : Math.min(50, t-prevMs);
+        if(t-lastIn>2500) autoPan += dtm*0.0075;
+        pan += ((ftx*W*0.22 + autoPan) - pan)*0.045;
+      }
+      if(t>0) prevMs=t;
       ctx.clearRect(0,0,W,H);
       var g1=ctx.createRadialGradient(W*.3,H*.14,0,W*.3,H*.14,Math.max(W,H)*.55);
       g1.addColorStop(0,'rgba(255,120,40,.20)'); g1.addColorStop(1,'rgba(255,120,40,0)');
@@ -1480,7 +1517,8 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
       for(var i=0;i<stars.length;i++){
         var st=stars[i];
         var a=.35+.65*Math.abs(Math.sin(st.p + t*.0006*st.s));
-        ctx.beginPath(); ctx.arc(st.x,st.y,st.r,0,6.2832);
+        var sx=((st.x+pan)%W+W)%W;
+        ctx.beginPath(); ctx.arc(sx,st.y,st.r,0,6.2832);
         ctx.fillStyle='rgba('+st.c+','+a.toFixed(3)+')'; ctx.fill();
       }
     }
@@ -1666,7 +1704,15 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
     function resize(){ var w=window.innerWidth, h=window.innerHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); var mobile=w<900; coreGroup.position.x=mobile?0:2.9; globeGroup.position.x=mobile?0:2.9; gridGroup.position.x=mobile?0:2.4; var s=mobile?.72:1; coreGroup.scale.setScalar(s); globeGroup.scale.setScalar(s); galaxyGroup.scale.setScalar(mobile?.95:1); galaxyGroup.position.x=mobile?0:-1.6; }
     window.addEventListener('resize', resize); resize();
 
-    window.addEventListener('pointermove', function(e){ tx=(e.clientX/window.innerWidth-.5)*2; ty=(e.clientY/window.innerHeight-.5)*2; });
+    var lastInputT=0, autoAz=0;
+    window.addEventListener('pointermove', function(e){ tx=(e.clientX/window.innerWidth-.5)*2; ty=(e.clientY/window.innerHeight-.5)*2; lastInputT=performance.now(); });
+    /* Touch: on Android / iOS the browser takes the gesture over for
+       scrolling and fires pointercancel, so pointermove alone barely
+       reaches the scene — the HDG numbers moved (the HUD listens to
+       touchmove) but the camera itself stayed frozen at HDG 000, which
+       is why the 360 view read as missing on phones. Mirror the same
+       touchmove input here so a drag across the page orbits the scene. */
+    window.addEventListener('touchmove', function(e){ if(e.touches && e.touches[0]){ tx=(e.touches[0].clientX/window.innerWidth-.5)*2; ty=(e.touches[0].clientY/window.innerHeight-.5)*2; lastInputT=performance.now(); } }, {passive:true});
 
     document.querySelectorAll('[data-mode]').forEach(function(btn){
       btn.addEventListener('click', function(){
@@ -1677,11 +1723,11 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
     });
 
     var clock=new THREE.Clock();
-    var orbitAz=0, orbitEl=0, orbitResetSeen=0;
+    var orbitAz=0, orbitEl=0, orbitResetSeen=0, prevT=0;
     function animate(){
       requestAnimationFrame(animate);
       try{
-        var t=clock.getElapsedTime(); var speed=reduced?.18:1;
+        var t=clock.getElapsedTime(); var dt=Math.min(.05, Math.max(0, t-prevT)); prevT=t; var speed=reduced?.18:1;
         mx += (tx-mx)*.045; my += (ty-my)*.045;
         core.rotation.y=t*.22*speed; core.rotation.x=t*.1*speed; coreWire.rotation.y=-t*.16*speed; coreWire.rotation.z=t*.08*speed;
         inner.rotation.y=-t*.5*speed; inner.rotation.x=t*.3*speed;
@@ -1710,16 +1756,29 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
            gentle parallax. Reset (orbitResetSeen) snaps the smoothed angles to centre. */
         var orbitState=window.__orbitState;
         var orbitOn = !orbitState || orbitState.enabled;
-        if(orbitState && orbitState.resetSeq!==orbitResetSeen){ orbitResetSeen=orbitState.resetSeq; orbitAz=0; orbitEl=0; }
+        if(orbitState && orbitState.resetSeq!==orbitResetSeen){ orbitResetSeen=orbitState.resetSeq; orbitAz=0; orbitEl=0; autoAz=0; }
         var ease = reduced ? .12 : .045;
         if(orbitOn){
-          orbitAz += ((tx*Math.PI) - orbitAz)*ease;
+          /* LAUNCHED IN 360, ON EVERY DEVICE — a phone has no hovering
+             mouse, so a view that only moves on pointer input opens
+             frozen at HDG 000 and reads as "no 360 here". After ~2.5s
+             with no pointer / touch input the view slowly orbits on its
+             own (a full 360° sweep in ~70s), starting from launch; any
+             mouse move or touch drag takes over instantly, and the
+             drift resumes once the reader goes idle again. Orbit OFF
+             and prefers-reduced-motion both stop the drift. */
+          if(!reduced && performance.now()-lastInputT>2500) autoAz += dt*0.09;
+          orbitAz += (((tx*Math.PI)+autoAz) - orbitAz)*ease;
           orbitEl += ((-ty*1.0) - orbitEl)*ease;
           var orbitR=9.5, horizR=Math.cos(orbitEl*.45)*orbitR;
           camera.position.x = Math.sin(orbitAz)*horizR;
           camera.position.z = Math.cos(orbitAz)*horizR;
           camera.position.y = .6 + Math.sin(orbitEl)*3.4;
           camera.lookAt(0,.1,-.8);
+          /* Publish the live heading / tilt so the HUD can mirror the
+             auto-orbit while the reader is idle (see the orbit-control
+             script's idle sync). */
+          if(orbitState){ orbitState.hdgDeg=((orbitAz*57.29578)%360+360)%360; orbitState.tiltDeg=orbitEl*57.29578; }
         } else {
           orbitAz += (0-orbitAz)*ease; orbitEl += (0-orbitEl)*ease;
           camera.position.x = mx*1.15; camera.position.y = .6 - my*.8; camera.position.z = 9.5;
@@ -1857,14 +1916,13 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var sat=document.querySelector('.orbiter'), astro=document.querySelector('.astro'), target=document.getElementById('targetNode');
   if(!sat||!astro||!target||reduced) return;
-  document.body.classList.add('roam-on');
   function mk(el){ return {el:el, x:0, y:0, init:false}; }
   var S=mk(sat), A=mk(astro), T=mk(target);
   function clamp(v,lo,hi){ return v<lo?lo:(v>hi?hi:v); }
-  function step(n, tx, ty, rot){
+  function step(n, tx, ty, rot, rate){
     if(!n.init){ n.x=tx; n.y=ty; n.init=true; }
-    n.x += (tx-n.x)*0.055;
-    n.y += (ty-n.y)*0.055;
+    n.x += (tx-n.x)*rate;
+    n.y += (ty-n.y)*rate;
     n.el.style.transform='translate('+n.x.toFixed(1)+'px,'+n.y.toFixed(1)+'px) rotate('+rot.toFixed(2)+'deg)';
   }
   /* CLEAR OF THE TEXT — the crew roams everywhere, but never ON the
@@ -1886,11 +1944,25 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
           SAT-01 parked on the "RED TEAM · DELHI" pill, the astronaut
           settled on the intro paragraph and Earth covered the "View
           Honeypot Project" button. The dodge now scores every escape
-          slot (just above / just below each no-fly box) by the text
-          area it would cover and takes the nearest slot that covers
-          NONE; when a phone hero leaves no fully clear slot it takes
-          the slot covering the least text, and the easing carries the
-          crew smoothly there. Roaming is unchanged everywhere else.
+          slot by the text area it would cover and takes the nearest
+          slot that covers NONE; when a phone hero leaves no fully
+          clear slot it takes the slot covering the least text, and
+          the easing carries the crew smoothly there. Roaming is
+          unchanged everywhere else.
+       3. TWO-AXIS ESCAPES. The vertical-only dodge still failed below
+          the fold: in the dense sections (cert grid, skills grid,
+          project) the whole screen height at the satellite's sweep X
+          can be one stack of cards, so no above / below slot exists
+          and the least-bad slot still sat on a card's text — SAT-01
+          kept turning up on the Profile heading, the Python card,
+          cert images, the diagram and the Kali deck. The dodge now
+          escapes sideways too: beside each no-fly box (which for a
+          full-width card means out into the empty galaxy margins),
+          the corners where a sideways and a vertical escape meet,
+          and the viewport edges. And while a crew member's current
+          spot still overlaps any text it eases three times faster,
+          so crossing a card on the way to clear space is a pass,
+          never a park.
           On phones the hero also keeps a clear crew lane of its own:
           the hero's top padding (176px at ≤900px) leaves a band of
           bare galaxy between the nav and the status pill tall enough
@@ -1899,18 +1971,28 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
           instead of being squeezed onto the pill. */
   var wrapEl=document.querySelector('.wrap');
   var prot=[], protT=-9, protSy=-9999;
-  /* No-fly boxes carry a weight: the pill, the buttons and the headings
-     are the words a reader must never lose (weight 5-6), the hero's
-     role / credential lines come next (4), the operator card 3, and the
-     long paragraphs and panels 1 — so when a dense phone hero leaves no
-     fully clear slot, the dodge grazes a paragraph long before it ever
-     touches the pill or a heading. */
+  /* No-fly boxes carry a weight: the pill, the buttons, the headings
+     and the terminal's own text lines (#termBody — the card around them
+     is only weight 1, so a slot over the card's padding now beats a
+     slot over its words) are the text a reader must never lose
+     (weight 5-6), the hero's role / credential lines come next (4),
+     the content cards of every section 3 — operator card, cert cards,
+     skill cards, experience cards, the architecture diagram, the
+     Attacker POV deck, the Python code block and the demo video — the
+     smaller panels and the footer 2, and the long paragraphs and hero
+     panels 1 — so when a dense phone hero leaves no fully clear slot,
+     the dodge grazes a paragraph long before it ever touches the pill
+     or a heading. The card groups matter: an earlier set protected
+     only the hero and the headings, so below the fold the satellite
+     had no reason to leave the cert cards, the diagram or the deck
+     alone and parked straight on their text. */
   var PROT_GROUPS=[
-    ['.status, .hero-ctas', 6],
+    ['.status, .hero-ctas, #termBody, .term-actions', 6],
     ['h1, h2, .sec-head', 5],
     ['.role-line, .cred-line', 4],
-    ['.operator', 3],
-    ['.lead, .terminal, .controls-card, .hero-meta, #attackLog', 1]
+    ['.operator, .cert-card, .skill, .exp, .plan-wrap, .atk-deck, .code-wrap, .video-embed, .controls-card', 3],
+    ['.arch-box, .flow-step, .card, .compare-item, .desc, .detail, footer', 2],
+    ['.lead, .terminal, .hero-meta, #attackLog', 1]
   ];
   function measureProt(t, sy, H){
     if(t-protT<0.12 && Math.abs(sy-protSy)<3) return;
@@ -1933,19 +2015,59 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
     }
     return a;
   }
-  function avoid(x, y, w, h, lo, H){
-    var hi=Math.max(lo, H-h-8);
-    function cl(v){ return v<lo?lo:(v>hi?hi:v); }
-    y=cl(y);
-    var bestY=y, bestA=overlapArea(x, y, w, h), bestD=0;
-    if(bestA===0) return y;
-    var cands=[lo, hi];
-    for(var i=0;i<prot.length;i++){ cands.push(prot[i].b+8, prot[i].t-h-8); }
-    for(var j=0;j<cands.length;j++){
-      var cy=cl(cands[j]), a=overlapArea(x, cy, w, h), d=Math.abs(cy-y);
-      if(a<bestA || (a===bestA && d<bestD)){ bestY=cy; bestA=a; bestD=d; }
+  /* Two-axis dodge: score the desired spot, then every escape slot —
+     just above / below / beside each no-fly box, the viewport edges,
+     and (only if nothing fully clear turned up) the corners where a
+     sideways and a vertical escape meet. Sideways escapes are what
+     free the satellite in the dense sections: beside a full-width
+     card is the empty galaxy margin. Two refinements keep the crew
+     from piling into one corner of a crowded hero: each slot's score
+     adds a small distance cost (2 per px), so a far corner has to be
+     decisively clearer than a near slot to win; and the other two
+     crew members' live boxes are passed in as extra no-fly zones
+     (weight 4), so the three can never stack on the same spot. */
+  function dodge(x, y, w, h, lo, H, W, others){
+    var hiY=Math.max(lo, H-h-10), loX=10, hiX=Math.max(loX, W-w-10);
+    function clX(v){ return v<loX?loX:(v>hiX?hiX:v); }
+    function clY(v){ return v<lo?lo:(v>hiY?hiY:v); }
+    x=clX(x); y=clY(y);
+    var boxes=(others && others.length) ? prot.concat(others) : prot;
+    function areaAt(cx, cy){
+      var a=0;
+      for(var i=0;i<boxes.length;i++){
+        var r=boxes[i];
+        var ox=Math.min(cx+w, r.r)-Math.max(cx, r.l);
+        var oy=Math.min(cy+h, r.b)-Math.max(cy, r.t);
+        if(ox>0 && oy>0) a+=ox*oy*r.wt;
+      }
+      return a;
     }
-    return bestY;
+    if(areaAt(x, y)===0) return {x:x, y:y};
+    function score(cx, cy){
+      var dx=cx-x, dy=cy-y;
+      return areaAt(cx, cy) + 2*Math.sqrt(dx*dx+dy*dy);
+    }
+    var bestX=x, bestY=y, bestS=score(x, y);
+    function tryC(cx, cy){
+      cx=clX(cx); cy=clY(cy);
+      var s=score(cx, cy);
+      if(s<bestS-1){ bestX=cx; bestY=cy; bestS=s; }
+    }
+    var i, r;
+    for(i=0;i<boxes.length;i++){ r=boxes[i]; tryC(x, r.b+8); tryC(x, r.t-h-8); tryC(r.r+8, y); tryC(r.l-w-8, y); }
+    tryC(loX, y); tryC(hiX, y); tryC(x, lo); tryC(x, hiY);
+    if(areaAt(bestX, bestY)>0){
+      for(i=0;i<boxes.length;i++){ r=boxes[i]; tryC(r.r+8, r.b+8); tryC(r.l-w-8, r.b+8); tryC(r.r+8, r.t-h-8); tryC(r.l-w-8, r.t-h-8); }
+    }
+    return {x:bestX, y:bestY};
+  }
+  /* Escape speed: a crew member whose current spot still overlaps
+     text eases three times faster than cruising speed, so it crosses
+     a card on its way to clear space instead of drifting over the
+     words. */
+  function rateFor(n, w, h){
+    if(!n.init) return 0.055;
+    return overlapArea(n.x, n.y, w, h)>0 ? 0.16 : 0.055;
   }
   function frame(){
     var W=window.innerWidth, H=window.innerHeight, sy=window.scrollY||0, t=performance.now()/1000;
@@ -1953,34 +2075,58 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
     var wrapL=0, wrapR=W;
     if(wrapEl){ var wr=wrapEl.getBoundingClientRect(); wrapL=wr.left; wrapR=wr.right; }
     var gutL=wrapL, gutR=W-wrapR;
-    /* SAT-01 — full-width sweep; its flight band follows the scroll */
     var sw=sat.offsetWidth||172, sh=sat.offsetHeight||110;
+    var aw=astro.offsetWidth||150, ah=astro.offsetHeight||190;
+    var tw=target.offsetWidth||148, th=target.offsetHeight||186;
+    /* The other two crew members' live boxes ride along as no-fly
+       zones, so the three never stack on the same clear corner. */
+    function crewBox(n, w, h){ return n.init ? {l:n.x-10, r:n.x+w+10, t:n.y-10, b:n.y+h+10, wt:4} : null; }
+    var bS=crewBox(S, sw, sh), bA=crewBox(A, aw, ah), bT=crewBox(T, tw, th);
+    function others(){ var o=[]; for(var i=0;i<arguments.length;i++){ if(arguments[i]) o.push(arguments[i]); } return o; }
+    /* SAT-01 — full-width sweep; its flight band follows the scroll */
     var sweep=0.5-0.5*Math.cos(t*0.14);
     var sx=14+sweep*Math.max(0,(W-sw-28));
     var band=0.5+0.5*Math.sin(sy*0.0011-1.2);
     var syy=74+band*Math.max(0,(H*0.68-74))+Math.sin(t*0.7)*7;
-    step(S, sx, avoid(sx,syy,sw,sh,70,H), Math.sin(t*0.5)*2.5);
+    var sd=dodge(sx, syy, sw, sh, 70, H, W, others(bA, bT));
+    step(S, sd.x, sd.y, Math.sin(t*0.5)*2.5, rateFor(S, sw, sh));
     /* Hacker astronaut — right gutter lane on wide screens, otherwise
        the right edge lane; works up and down with the scroll */
-    var aw=astro.offsetWidth||150, ah=astro.offsetHeight||190;
     var ax;
     if(gutR>aw*0.72){ ax=wrapR+(gutR-aw)/2+Math.sin(sy*0.0009+2.6)*Math.min(34,Math.max(0,(gutR-aw)/2)); }
     else { ax=W-aw-10-(W*0.16)*(0.5+0.5*Math.sin(sy*0.0009+2.6)); }
     var ay=70+(H-ah-84)*(0.5+0.5*Math.sin(sy*0.0013+Math.PI))+Math.sin(t*0.9)*9;
     ax=clamp(ax,8,W-aw-8); ay=clamp(ay,66,H-ah-8);
-    step(A, ax, avoid(ax,ay,aw,ah,66,H), Math.sin(t*0.6)*4.5);
+    var ad=dodge(ax, ay, aw, ah, 66, H, W, others(bS, bT));
+    step(A, ad.x, ad.y, Math.sin(t*0.6)*4.5, rateFor(A, aw, ah));
     /* Earth target server — left gutter lane on wide screens, opposite
        phase to the astronaut */
-    var tw=target.offsetWidth||148, th=target.offsetHeight||186;
     var tx;
     if(gutL>tw*0.72){ tx=(gutL-tw)/2+Math.sin(sy*0.0007+4.2)*Math.min(34,Math.max(0,(gutL-tw)/2)); }
     else { tx=10+(W*0.14)*(0.5+0.5*Math.sin(sy*0.0007+4.2)); }
     var ty=70+(H-th-84)*(0.5+0.5*Math.sin(sy*0.001+0.6));
     tx=clamp(tx,8,W-tw-8); ty=clamp(ty,66,H-th-8);
-    step(T, tx, avoid(tx,ty,tw,th,66,H), Math.sin(t*0.45+2)*2);
+    var td=dodge(tx, ty, tw, th, 66, H, W, others(bS, bA));
+    step(T, td.x, td.y, Math.sin(t*0.45+2)*2, rateFor(T, tw, th));
     requestAnimationFrame(frame);
   }
-  requestAnimationFrame(frame);
+  /* Start only once the layout has settled: the first frame snaps
+     each member straight to its dodged target, and a target measured
+     before the webfonts swap (the hero name and pill change size)
+     can sit on the hero text — the crew then visibly crossed the
+     name on load while easing to the corrected slot. Waiting for
+     document.fonts.ready (with a 1.2s fallback so the crew never
+     waits on a hung font) makes the first measured boxes the real
+     ones; until the start, the crew keeps its parked background
+     spots. */
+  var started=false;
+  function start(){
+    if(started) return; started=true;
+    document.body.classList.add('roam-on');
+    requestAnimationFrame(frame);
+  }
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ setTimeout(start, 60); }); }
+  setTimeout(start, 1200);
 })();
 </script>
 <script>
