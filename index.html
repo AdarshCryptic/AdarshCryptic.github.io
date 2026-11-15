@@ -589,6 +589,18 @@ body.attack-off #attackSvg,body.attack-off #attackLog,body.attack-off .target-no
   .orbiter{width:120px}
   .astro .drift-label,.orbiter .drift-label{white-space:normal;line-height:1.35}
 }
+/* PHONES (≤560px) — a single column of full-width cards leaves
+   almost no text-clear pocket at the ≤900px crew size, so the
+   crew flies smaller again: at 84–104px wide a member fits
+   inside a certificate image and the wider section gaps, and
+   what crossings remain cover far less of any line. The roam
+   script also runs the journeys faster on narrow screens, so a
+   crossing is a pass of a couple of seconds, not a crawl. */
+@media(max-width:560px){
+  .astro{width:84px}
+  .orbiter{width:104px}
+  .target-node{width:84px}
+}
 /* MID-WIDTH LAPTOPS (901–1600px) — the content column is the same
    1180px, so the galaxy margins shrink to ~90–210px a side: too
    narrow for the full-size crew. With nowhere fully clear to sit in
@@ -602,6 +614,17 @@ body.attack-off #attackSvg,body.attack-off #attackLog,body.attack-off .target-no
   .orbiter{width:128px}
   .target-node{width:112px}
   .astro .drift-label,.orbiter .drift-label{font-size:8.5px;letter-spacing:.07em}
+}
+/* CROWDED LAPTOPS (901–1280px) — the content column fills the
+   screen edge to edge, so the only text-clear pockets are card
+   backgrounds, section gaps and the screen corners. The crew
+   flies one size smaller again here so it can actually settle
+   into those pockets instead of straddling the words around
+   them — still large enough to read at a glance. */
+@media(min-width:901px) and (max-width:1280px){
+  .astro{width:100px}
+  .orbiter{width:116px}
+  .target-node{width:100px}
 }
 </style>
 </head>
@@ -1886,45 +1909,38 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
   /* ---------- SPACE TRAFFIC ROAM — astronaut / SAT-01 / Earth server ----------
      The three hand-drawn nodes used to be parked at the top of the page:
      the satellite patrolled one band under the nav, the Earth target
-     server was display:none below 1560px wide, and a scroll fade hid the
-     whole crew once the reader left the hero — so on a normal laptop,
-     past the first screen, there was no astronaut, no satellite and no
-     Earth server anywhere on the site. Now they MOVE ALL OVER THE
-     WEBSITE: all three stay position:fixed for the entire scroll, and
-     this loop steers them by transform around the viewport. While
-     roaming they ride in the FOREGROUND overlay lane (body.roam-on,
-     z-index:40, pointer-events off): behind the content they were
-     invisible in practice — at laptop widths the opaque cards fill the
-     screen, so the crew spent the whole page hidden behind them. In
-     front, travelling the whole screen, they are seen everywhere —
-       · SAT-01 sweeps the full width, edge to edge and back, while its
-         flight band traverses the FULL screen height over time, top
-         band to bottom band, in every section;
-       · the hacker astronaut flies a wide patrol loop across the
-         right half of the screen — in from the right margin toward
-         the middle and back, over the full screen height;
+     server was display:none below 1560px wide, and a scroll fade hid
+     the whole crew once the reader left the hero — so on a normal
+     laptop, past the first screen, there was no astronaut, no
+     satellite and no Earth server anywhere on the site. Now they MOVE
+     ALL OVER THE WEBSITE: all three stay position:fixed for the
+     entire scroll, ride in the FOREGROUND overlay lane (body.roam-on,
+     z-index:40, pointer-events off — behind the content they were
+     invisible in practice, because at laptop widths the opaque cards
+     fill the screen), and each flies its own continuous journey
+     across the full viewport, in every section, on its own clock —
+     the reader does not have to scroll to see them travel, and
+     scrolling advances every journey's phase, so the crew is
+     somewhere new in every section:
+       · SAT-01 sweeps the full width, edge to edge and back (~40s a
+         traverse), while its flight band traverses the FULL screen
+         height, top band to bottom band;
+       · the hacker astronaut patrols a wide loop across the right
+         half of the screen — in from the right margin toward the
+         middle and back, over the full height (~2min a loop);
        · the Earth target server flies the mirror loop on the left
          half, on the opposite height phase, so the crew stays spread
          across the screen, not bunched.
-     All three journeys run on their own clocks (the reader does not
-     have to scroll to see them move), and scrolling advances every
-     journey's phase, so the crew is somewhere new in every section.
-     An earlier build pinned the astronaut and the Earth server to
-     the screen edges and moved them only with the scroll — the owner
-     kept reporting, correctly, that they read as parked at the top
-     of the site; the travelling journeys below are the fix.
-     Pointer-events stay off, so the crew can never block a tap or a
-     click even while crossing the page. The attack-chain beams read the
-     nodes' live positions every frame, so the astronaut → SAT-01 →
-     Earth links keep tracking them wherever they roam. Positions ease
-     toward their targets each frame, so scrolling and time both move
-     the crew smoothly, never in jumps. prefers-reduced-motion: no roam
-     — the nodes keep their parked CSS spots and simply stay on screen
-     for the whole page. */
+     The attack-chain beams read the nodes' live positions every
+     frame, so the astronaut → SAT-01 → Earth links keep tracking
+     them wherever they roam. Positions ease toward their targets
+     each frame, so scrolling and time both move the crew smoothly,
+     never in jumps. prefers-reduced-motion: no roam — the nodes
+     keep their parked CSS spots and simply stay on screen. */
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var sat=document.querySelector('.orbiter'), astro=document.querySelector('.astro'), target=document.getElementById('targetNode');
   if(!sat||!astro||!target||reduced) return;
-  function mk(el){ return {el:el, x:0, y:0, init:false}; }
+  function mk(el){ return {el:el, x:0, y:0, init:false, tx:0, ty:0, rx:0, ry:0, dT:-9, dSy:-9999, has:false}; }
   var S=mk(sat), A=mk(astro), T=mk(target);
   function clamp(v,lo,hi){ return v<lo?lo:(v>hi?hi:v); }
   function step(n, tx, ty, rot, rate){
@@ -1933,155 +1949,194 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
     n.y += (ty-n.y)*rate;
     n.el.style.transform='translate('+n.x.toFixed(1)+'px,'+n.y.toFixed(1)+'px) rotate('+rot.toFixed(2)+'deg)';
   }
-  /* CLEAR OF THE TEXT — the crew roams everywhere, but never ON the
-     words. Two guards, re-measured from the live layout:
-       1. GUTTER ANCHORS. The content column (.wrap, max 1180px)
-          leaves empty galaxy margins on wide screens. The astronaut's
-          journey is anchored on the RIGHT margin and the Earth
-          server's on the LEFT margin — over bare starfield, beside the
-          hero at load, so the astronaut is unmissably in the hero at
-          laptop and desktop widths alike instead of lost on top of a
-          card — and from those anchors their swings carry them in
-          across the screen and back as their journeys run.
-       2. TEXT DODGE. The live boxes of everything readable are no-fly
-          zones: the hero name (h1), every section heading block
-          (.sec-head / h2), the operator card — and the whole hero text
-          stack: the status pill, role line, credentials line, intro
-          paragraph, the CTA buttons, the stat cards, the terminal, the
-          3D controls card and the attack log. The pill and the buttons
-          were missing from this set, and the old two-pass nudge could
-          not escape the phone hero's dense stack — so on small screens
-          SAT-01 parked on the "RED TEAM · DELHI" pill, the astronaut
-          settled on the intro paragraph and Earth covered the "View
-          Honeypot Project" button. The dodge now scores every escape
-          slot by the text area it would cover and takes the nearest
-          slot that covers NONE; when a phone hero leaves no fully
-          clear slot it takes the slot covering the least text, and
-          the easing carries the crew smoothly there. Roaming is
-          unchanged everywhere else.
-       3. TWO-AXIS ESCAPES. The vertical-only dodge still failed below
-          the fold: in the dense sections (cert grid, skills grid,
-          project) the whole screen height at the satellite's sweep X
-          can be one stack of cards, so no above / below slot exists
-          and the least-bad slot still sat on a card's text — SAT-01
-          kept turning up on the Profile heading, the Python card,
-          cert images, the diagram and the Kali deck. The dodge now
-          escapes sideways too: beside each no-fly box (which for a
-          full-width card means out into the empty galaxy margins),
-          the corners where a sideways and a vertical escape meet,
-          and the viewport edges. And while a crew member's current
-          spot still overlaps any text it eases three times faster,
-          so crossing a card on the way to clear space is a pass,
-          never a park.
-          On phones the hero also keeps a clear crew lane of its own:
-          the hero's top padding (176px at ≤900px) leaves a band of
-          bare galaxy between the nav and the status pill tall enough
-          for the whole crew, so at the top of the page all three
-          patrol that lane — visible, roaming, and off the words —
-          instead of being squeezed onto the pill. */
+  /* CLEAR OF THE WORDS — the crew roams everywhere, but never ON
+     the text. The old dodge scored candidate spots against whole
+     CARD boxes with small weights, which made the biggest, cheapest
+     thing to cover a whole paragraph: at laptop widths the astronaut
+     and the Earth server spent minutes crawling across the hero
+     intro paragraph and the section body text, because covering a
+     weight-1 paragraph cost less than crossing to any clear slot.
+     The dodge now measures the page's actual TEXT LINES — every
+     rendered line of every heading, paragraph, list item, button,
+     label and terminal line, via text-node Range rects — and scores
+     them at weight 14, far above the fractional box weights (card
+     boxes 0.3, heading blocks 0.6, content images 0.8, the pill /
+     CTA cluster 1). So the cheapest spots are now, in order: open
+     galaxy, card background and padding, images, and only as a
+     last resort the words — and a spot that covers NO text line
+     always wins over one that covers any. The box weights are
+     fractional on purpose: at desktop widths the galaxy gutters
+     are always text-clear, and at full box weight their zero
+     score beat every in-content slot on distance, which pinned
+     the astronaut and the Earth server to the side margins for
+     whole sections — travelling up and down the edge instead of
+     across the site. At fractional weight a slot that merely
+     grazes a card's background near the journey target beats the
+     long trip back to the gutter, while any slot covering actual
+     words still loses to everything. All boxes are stored in document coordinates and
+     re-measured from the live layout (text lines every 0.5s or
+     30px of scroll, card boxes every 0.12s), so the map tracks the
+     page as it settles, scrolls and resizes.
+     Candidate spots: the journey point itself, the viewport
+     pockets (corners, edges, the band under the nav, the bottom
+     band), an escape just above / below / beside every nearby text
+     line and card box, and — only while the best spot still covers
+     text — the corners where those escapes meet. Each candidate
+     pays 2 per px of distance, so a far corner must be decisively
+     clearer than a near slot to win, and the other two crew
+     members' live boxes ride along as no-fly zones (weight 6) so
+     the three never stack on the same spot. A member whose current
+     spot still covers a text line eases three times faster, so
+     crossing words on the way to clear space is a pass, never a
+     park. Each member's dodge is cached until its journey target
+     moves ~10px, a quarter second passes, or the reader scrolls
+     ~30px — the journeys move slowly enough that 4 re-dodges a
+     second per member keep the map honest at a fraction of the
+     per-frame cost. */
   var wrapEl=document.querySelector('.wrap');
-  var prot=[], protT=-9, protSy=-9999;
-  /* No-fly boxes carry a weight: the pill, the buttons, the headings
-     and the terminal's own text lines (#termBody — the card around them
-     is only weight 1, so a slot over the card's padding now beats a
-     slot over its words) are the text a reader must never lose
-     (weight 5-6), the hero's role / credential lines come next (4),
-     the content cards of every section 3 — operator card, cert cards,
-     skill cards, experience cards, the architecture diagram, the
-     Attacker POV deck, the Python code block and the demo video — the
-     smaller panels and the footer 2, and the long paragraphs and hero
-     panels 1 — so when a dense phone hero leaves no fully clear slot,
-     the dodge grazes a paragraph long before it ever touches the pill
-     or a heading. The card groups matter: an earlier set protected
-     only the hero and the headings, so below the fold the satellite
-     had no reason to leave the cert cards, the diagram or the deck
-     alone and parked straight on their text. */
-  var PROT_GROUPS=[
-    ['.status, .hero-ctas, #termBody, .term-actions', 6],
-    ['h1, h2, .sec-head', 5],
-    ['.role-line, .cred-line', 4],
-    ['.operator, .cert-card, .skill, .exp, .plan-wrap, .atk-deck, .code-wrap, .video-embed, .controls-card', 3],
-    ['.arch-box, .flow-step, .card, .compare-item, .desc, .detail, footer', 2],
-    ['.lead, .terminal, .hero-meta, #attackLog', 1]
+  var boxes=[], lines=[], boxT=-9, boxSy=-9999, lineT=-9, lineSy=-9999;
+  var BOX_GROUPS=[
+    ['.status, .hero-ctas', 1],
+    ['h1, h2, .sec-head', 0.6],
+    ['.cert-card img, .operator img, .plan-wrap img, .video-embed img, .atk-card img', 0.8],
+    ['.operator, .cert-card, .skill, .exp, .plan-wrap, .atk-deck, .code-wrap, .video-embed, .controls-card, .terminal, #attackLog, .arch-box, .flow-step, .card, .compare-item, footer', 0.3]
   ];
-  function measureProt(t, sy, H){
-    if(t-protT<0.12 && Math.abs(sy-protSy)<3) return;
-    protT=t; protSy=sy; prot=[];
-    for(var g=0;g<PROT_GROUPS.length;g++){
-      var els=document.querySelectorAll(PROT_GROUPS[g][0]);
+  function measureBoxes(t, sy, H){
+    if(t-boxT<0.12 && Math.abs(sy-boxSy)<3) return;
+    boxT=t; boxSy=sy; boxes=[];
+    for(var g=0;g<BOX_GROUPS.length;g++){
+      var els=document.querySelectorAll(BOX_GROUPS[g][0]);
       for(var i=0;i<els.length;i++){
         var r=els[i].getBoundingClientRect();
-        if(r.width>0 && r.bottom>-60 && r.top<H+60) prot.push({l:r.left-14, r:r.right+14, t:r.top-16, b:r.bottom+12, wt:PROT_GROUPS[g][1]});
+        if(r.width>0 && r.bottom>-60 && r.top<H+60) boxes.push({l:r.left-12, r:r.right+12, dt:r.top+sy-14, db:r.bottom+sy+10, wt:BOX_GROUPS[g][1], img:(g===2)?1:0});
       }
     }
   }
-  function overlapArea(x, y, w, h){
-    var a=0;
-    for(var i=0;i<prot.length;i++){
-      var r=prot[i];
-      var ox=Math.min(x+w, r.r)-Math.max(x, r.l);
-      var oy=Math.min(y+h, r.b)-Math.max(y, r.t);
-      if(ox>0 && oy>0) a+=ox*oy*r.wt;
+  var SKIP_TAGS={SCRIPT:1, STYLE:1, NOSCRIPT:1, TEXTAREA:1, OPTION:1, TEMPLATE:1};
+  function measureLines(t, sy, H){
+    if(t-lineT<0.5 && Math.abs(sy-lineSy)<30) return;
+    lineT=t; lineSy=sy;
+    var out=[], range=document.createRange();
+    function walk(el){
+      var r=el.getBoundingClientRect();
+      if(r.width===0 || r.bottom<-80 || r.top>H+80) return;
+      var cs=null;
+      for(var i=0;i<el.childNodes.length;i++){
+        var n=el.childNodes[i];
+        if(n.nodeType===3){
+          if(!n.nodeValue || !n.nodeValue.trim()) continue;
+          if(!cs){ cs=window.getComputedStyle(el); if(cs.display==='none' || cs.visibility==='hidden') return; }
+          range.selectNodeContents(n);
+          var rs=range.getClientRects();
+          for(var j=0;j<rs.length;j++){
+            var q=rs[j];
+            if(q.width>=2 && q.height>=4) out.push({l:q.left-5, r:q.right+5, dt:q.top+sy-4, db:q.bottom+sy+4});
+          }
+        } else if(n.nodeType===1){
+          if(SKIP_TAGS[n.tagName]) continue;
+          var cl=n.classList;
+          if(cl && (cl.contains('orbiter') || cl.contains('astro') || cl.contains('target-node'))) continue;
+          walk(n);
+        }
+      }
+    }
+    walk(document.body);
+    lines=out;
+  }
+  /* Weighted overlap of a candidate rect (viewport coords) with
+     every text line (weight 14) and card box; stops early once the
+     running total reaches cap, which is how losing candidates are
+     pruned without paying for a full scan. */
+  function areaAt(cx, cy, w, h, sy, allBoxes, cap){
+    var a=0, dt=cy+sy, db=dt+h, i, r, ox, oy;
+    for(i=0;i<lines.length;i++){ r=lines[i];
+      ox=Math.min(cx+w, r.r)-Math.max(cx, r.l); if(ox<=0) continue;
+      oy=Math.min(db, r.db)-Math.max(dt, r.dt); if(oy<=0) continue;
+      a+=ox*oy*14; if(a>=cap) return a;
+    }
+    for(i=0;i<allBoxes.length;i++){ r=allBoxes[i];
+      ox=Math.min(cx+w, r.r)-Math.max(cx, r.l); if(ox<=0) continue;
+      oy=Math.min(db, r.db)-Math.max(dt, r.dt); if(oy<=0) continue;
+      a+=ox*oy*r.wt; if(a>=cap) return a;
     }
     return a;
   }
-  /* Two-axis dodge: score the desired spot, then every escape slot —
-     just above / below / beside each no-fly box, the viewport edges,
-     and (only if nothing fully clear turned up) the corners where a
-     sideways and a vertical escape meet. Sideways escapes are what
-     free the satellite in the dense sections: beside a full-width
-     card is the empty galaxy margin. Two refinements keep the crew
-     from piling into one corner of a crowded hero: each slot's score
-     adds a small distance cost (2 per px), so a far corner has to be
-     decisively clearer than a near slot to win; and the other two
-     crew members' live boxes are passed in as extra no-fly zones
-     (weight 4), so the three can never stack on the same spot. */
-  function dodge(x, y, w, h, lo, H, W, others){
+  function textAreaAt(cx, cy, w, h, sy){
+    var dt=cy+sy, db=dt+h;
+    for(var i=0;i<lines.length;i++){ var r=lines[i];
+      var ox=Math.min(cx+w, r.r)-Math.max(cx, r.l); if(ox<=0) continue;
+      var oy=Math.min(db, r.db)-Math.max(dt, r.dt); if(oy<=0) continue;
+      return ox*oy;
+    }
+    return 0;
+  }
+  function dodge(n, x, y, w, h, lo, H, W, sy, t, others){
     var hiY=Math.max(lo, H-h-10), loX=10, hiX=Math.max(loX, W-w-10);
     function clX(v){ return v<loX?loX:(v>hiX?hiX:v); }
     function clY(v){ return v<lo?lo:(v>hiY?hiY:v); }
     x=clX(x); y=clY(y);
-    var boxes=(others && others.length) ? prot.concat(others) : prot;
-    function areaAt(cx, cy){
-      var a=0;
-      for(var i=0;i<boxes.length;i++){
-        var r=boxes[i];
-        var ox=Math.min(cx+w, r.r)-Math.max(cx, r.l);
-        var oy=Math.min(cy+h, r.b)-Math.max(cy, r.t);
-        if(ox>0 && oy>0) a+=ox*oy*r.wt;
-      }
-      return a;
+    if(n.has && Math.abs(x-n.rx)<10 && Math.abs(y-n.ry)<10 && t-n.dT<0.25 && Math.abs(sy-n.dSy)<30){
+      return {x:clX(n.tx), y:clY(n.ty)};
     }
-    if(areaAt(x, y)===0) return {x:x, y:y};
-    function score(cx, cy){
-      var dx=cx-x, dy=cy-y;
-      return areaAt(cx, cy) + 2*Math.sqrt(dx*dx+dy*dy);
-    }
-    var bestX=x, bestY=y, bestS=score(x, y);
+    var allBoxes=others.length?boxes.concat(others):boxes;
+    var a0=areaAt(x, y, w, h, sy, allBoxes, Infinity);
+    var bestX=x, bestY=y, bestS=a0;
     function tryC(cx, cy){
       cx=clX(cx); cy=clY(cy);
-      var s=score(cx, cy);
+      var dx=cx-x, dy=cy-y, dcost=2*Math.sqrt(dx*dx+dy*dy);
+      if(dcost>=bestS) return;
+      var s=areaAt(cx, cy, w, h, sy, allBoxes, bestS-dcost)+dcost;
       if(s<bestS-1){ bestX=cx; bestY=cy; bestS=s; }
     }
-    var i, r;
-    for(i=0;i<boxes.length;i++){ r=boxes[i]; tryC(x, r.b+8); tryC(x, r.t-h-8); tryC(r.r+8, y); tryC(r.l-w-8, y); }
-    tryC(loX, y); tryC(hiX, y); tryC(x, lo); tryC(x, hiY);
-    if(areaAt(bestX, bestY)>0){
-      for(i=0;i<boxes.length;i++){ r=boxes[i]; tryC(r.r+8, r.b+8); tryC(r.l-w-8, r.b+8); tryC(r.r+8, r.t-h-8); tryC(r.l-w-8, r.t-h-8); }
+    if(a0>0){
+      var i, r, dt, db;
+      tryC(loX, lo); tryC(hiX, lo); tryC(loX, hiY); tryC(hiX, hiY);
+      tryC(loX, y); tryC(hiX, y); tryC(x, lo); tryC(x, hiY);
+      tryC((loX+hiX)/2, lo); tryC((loX+hiX)/2, hiY);
+      for(i=0;i<allBoxes.length;i++){ r=allBoxes[i];
+        if(r.r<x-620 || r.l>x+w+620) continue;
+        dt=r.dt-sy; db=r.db-sy;
+        if(db<y-620 || dt>y+h+620) continue;
+        tryC(x, db+6); tryC(x, dt-h-6); tryC(r.r+6, y); tryC(r.l-w-6, y);
+        /* Interior pockets: a card's own corners (its padding and
+           background) and, for a content image, the slot centred
+           on the image — a big picture is a far cheaper thing to
+           cross than the words beside it, and in the dense grids
+           these interiors are often the only text-clear slots the
+           escapes above never generate. */
+        tryC(r.l+6, dt+6); tryC(r.r-w-6, db-h-6);
+        if(r.img) tryC((r.l+r.r-w)/2, (dt+db-h)/2);
+      }
+      for(i=0;i<lines.length;i++){ r=lines[i];
+        if(r.r<x-620 || r.l>x+w+620) continue;
+        dt=r.dt-sy; db=r.db-sy;
+        if(db<y-620 || dt>y+h+620) continue;
+        tryC(x, db+5); tryC(x, dt-h-5); tryC(r.r+5, y); tryC(r.l-w-5, y);
+      }
+      if(textAreaAt(bestX, bestY, w, h, sy)>0){
+        for(i=0;i<allBoxes.length;i++){ r=allBoxes[i];
+          if(r.r<x-620 || r.l>x+w+620) continue;
+          dt=r.dt-sy; db=r.db-sy;
+          if(db<y-620 || dt>y+h+620) continue;
+          tryC(r.r+6, db+6); tryC(r.l-w-6, db+6); tryC(r.r+6, dt-h-6); tryC(r.l-w-6, dt-h-6);
+        }
+      }
     }
+    n.rx=x; n.ry=y; n.tx=bestX; n.ty=bestY; n.dT=t; n.dSy=sy; n.has=true;
     return {x:bestX, y:bestY};
   }
-  /* Escape speed: a crew member whose current spot still overlaps
-     text eases three times faster than cruising speed, so it crosses
-     a card on its way to clear space instead of drifting over the
-     words. */
-  function rateFor(n, w, h){
-    if(!n.init) return 0.055;
-    return overlapArea(n.x, n.y, w, h)>0 ? 0.16 : 0.055;
+  /* Escape speed: a crew member whose current spot still covers a
+     text line eases three times faster than cruising speed, so it
+     crosses the words on its way to clear space instead of
+     drifting over them. */
+  function rateFor(n, w, h, sy){
+    if(!n.init) return 0.07;
+    return textAreaAt(n.x, n.y, w, h, sy)>0 ? 0.22 : 0.07;
   }
   function frame(){
     var W=window.innerWidth, H=window.innerHeight, sy=window.scrollY||0, t=performance.now()/1000;
-    measureProt(t, sy, H);
+    measureBoxes(t, sy, H);
+    measureLines(t, sy, H);
     var wrapL=0, wrapR=W;
     if(wrapEl){ var wr=wrapEl.getBoundingClientRect(); wrapL=wr.left; wrapR=wr.right; }
     var gutL=wrapL, gutR=W-wrapR;
@@ -2089,40 +2144,38 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
     var aw=astro.offsetWidth||150, ah=astro.offsetHeight||190;
     var tw=target.offsetWidth||148, th=target.offsetHeight||186;
     /* The other two crew members' live boxes ride along as no-fly
-       zones, so the three never stack on the same clear corner. */
-    function crewBox(n, w, h){ return n.init ? {l:n.x-10, r:n.x+w+10, t:n.y-10, b:n.y+h+10, wt:4} : null; }
+       zones, so the three never stack on the same clear pocket. */
+    function crewBox(n, w, h){ return n.init ? {l:n.x-10, r:n.x+w+10, dt:n.y+sy-10, db:n.y+h+sy+10, wt:6} : null; }
     var bS=crewBox(S, sw, sh), bA=crewBox(A, aw, ah), bT=crewBox(T, tw, th);
     function others(){ var o=[]; for(var i=0;i<arguments.length;i++){ if(arguments[i]) o.push(arguments[i]); } return o; }
     /* THE JOURNEYS — all three crew members TRAVEL the whole screen
        on their own engines, in every section, whether or not the
-       reader scrolls. The old build pinned the astronaut to the
-       right edge and the Earth server to the left edge for the whole
-       page and moved them only when the reader scrolled; the
-       satellite crossed slowly but never left the top two-thirds of
-       the screen — so in practice the crew read as three decorations
-       parked at the top of the site, which is exactly what the owner
-       kept rejecting. Now each member flies a wide, slow Lissajous
-       journey across the full width and the full height of the
-       viewport — edge to edge, top band to bottom band — on its own
-       period (satellite ~57s a traverse, astronaut ~2min a loop,
-       Earth server ~2min the opposite loop), and scrolling advances
-       every journey's phase, so scrolling also visibly relocates
-       them section by section. The text dodge below still vets every
-       target: a journey point that falls on words is escaped to the
-       nearest clear slot, so the crew glides along the margins, the
-       gaps between sections and the hero's clear lane, following
-       their travelling targets as closely as clear space allows —
-       seen moving in Skills, Experience, Certifications, the
-       project and the footer, not only in the hero. */
-    var sp=sy*0.0021;
-    /* SAT-01 — full-width sweep, and its flight band now traverses
-       the FULL screen height over time instead of the top 68% */
-    var sweep=0.5-0.5*Math.cos(t*0.11+sp*1.4);
+       reader scrolls. Each flies a wide, slow Lissajous journey
+       across the full width and the full height of the viewport —
+       edge to edge, top band to bottom band — on its own period,
+       and scrolling advances every journey's phase, so scrolling
+       also visibly relocates them section by section. The text
+       dodge above vets every target: a journey point that falls on
+       words is escaped to the nearest text-clear slot, so the crew
+       glides along the margins, the pockets between cards and the
+       gaps between sections, following their travelling targets as
+       closely as clear space allows — seen moving in Skills,
+       Experience, Certifications, the project and the footer, not
+       only in the hero. */
+    var sp=sy*0.0026;
+    /* Narrow screens run the journeys ~1.6x faster: a phone's
+       single column offers almost no text-clear pocket, so the
+       crew crosses the words it cannot avoid at travelling speed
+       instead of crawling over them at cruise speed. */
+    var spd=W<640?1.6:1;
+    /* SAT-01 — full-width sweep (~40s a traverse), and its flight
+       band traverses the FULL screen height over ~95s */
+    var sweep=0.5-0.5*Math.cos(t*0.15*spd+sp*1.4);
     var sx=14+sweep*Math.max(0,(W-sw-28));
-    var band=0.5+0.5*Math.sin(t*0.045+sp*1.9-1.2);
+    var band=0.5+0.5*Math.sin(t*0.065*spd+sp*1.9-1.2);
     var syy=74+band*Math.max(0,(H-sh-88))+Math.sin(t*0.7)*7;
-    var sd=dodge(sx, syy, sw, sh, 70, H, W, others(bA, bT));
-    step(S, sd.x, sd.y, Math.sin(t*0.5)*2.5, rateFor(S, sw, sh));
+    var sd=dodge(S, sx, syy, sw, sh, 70, H, W, sy, t, others(bA, bT));
+    step(S, sd.x, sd.y, Math.sin(t*0.5)*2.5, rateFor(S, sw, sh, sy));
     /* Hacker astronaut — a real patrol, not a parked edge lane: it
        works the right half of the screen, swinging from the right
        margin in toward the middle and back while it traverses the
@@ -2130,21 +2183,21 @@ TELEGRAM_CHAT_ID = os.environ[<span class="s">"TELEGRAM_CHAT_ID"</span>]
        Where a galaxy gutter exists it starts from the gutter; the
        swing carries it across the screen from there. */
     var axBase=(gutR>aw*0.72) ? (wrapR+(gutR-aw)/2) : (W-aw-10);
-    var ax=axBase-Math.min(W*0.34, 520)*(0.5+0.5*Math.sin(t*0.037+sp*1.6+0.8));
-    var ay=70+(H-ah-84)*(0.5+0.5*Math.sin(t*0.052+sp*2.2+2.1))+Math.sin(t*0.9)*9;
+    var ax=axBase-Math.min(W*0.34, 520)*(0.5+0.5*Math.sin(t*0.055*spd+sp*1.6+0.8));
+    var ay=70+(H-ah-84)*(0.5+0.5*Math.sin(t*0.075*spd+sp*2.2+2.1))+Math.sin(t*0.9)*9;
     ax=clamp(ax,8,W-aw-8); ay=clamp(ay,66,H-ah-8);
-    var ad=dodge(ax, ay, aw, ah, 66, H, W, others(bS, bT));
-    step(A, ad.x, ad.y, Math.sin(t*0.6)*4.5, rateFor(A, aw, ah));
+    var ad=dodge(A, ax, ay, aw, ah, 66, H, W, sy, t, others(bS, bT));
+    step(A, ad.x, ad.y, Math.sin(t*0.6)*4.5, rateFor(A, aw, ah, sy));
     /* Earth target server — the mirror journey on the left half:
        opposite height phase to the astronaut, swinging in from the
        left margin toward the middle and back, so the two are never
        parked on the same band at the same time */
     var txBase=(gutL>tw*0.72) ? ((gutL-tw)/2) : 10;
-    var tx=txBase+Math.min(W*0.34, 520)*(0.5+0.5*Math.sin(t*0.033+sp*1.6+3.4));
-    var ty=70+(H-th-84)*(0.5+0.5*Math.sin(t*0.047+sp*2.2+2.1+Math.PI));
+    var tx=txBase+Math.min(W*0.34, 520)*(0.5+0.5*Math.sin(t*0.05*spd+sp*1.6+3.4));
+    var ty=70+(H-th-84)*(0.5+0.5*Math.sin(t*0.068*spd+sp*2.2+2.1+Math.PI));
     tx=clamp(tx,8,W-tw-8); ty=clamp(ty,66,H-th-8);
-    var td=dodge(tx, ty, tw, th, 66, H, W, others(bS, bA));
-    step(T, td.x, td.y, Math.sin(t*0.45+2)*2, rateFor(T, tw, th));
+    var td=dodge(T, tx, ty, tw, th, 66, H, W, sy, t, others(bS, bA));
+    step(T, td.x, td.y, Math.sin(t*0.45+2)*2, rateFor(T, tw, th, sy));
     requestAnimationFrame(frame);
   }
   /* Start only once the layout has settled: the first frame snaps
